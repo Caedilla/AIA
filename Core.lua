@@ -52,7 +52,7 @@ C_Calendar.GetDayEvent(i,j,index)
 local Options = {
 	type = "group",
 	name = function(info)
-		return "AIA - |cFFFF2C5AAccept Invites Automatically|r r|cFFFF2C5A" .. string.match(GetAddOnMetadata("RUF","Version"),"%d+") .."|r"
+		return "AIA - |cFFFF2C5AAccept Invites Automatically|r r|cFFFF2C5A" .. string.match(GetAddOnMetadata("AIA","Version"),"%d+") .."|r"
 	end,
 	order = 0,
 	childGroups = "tab",
