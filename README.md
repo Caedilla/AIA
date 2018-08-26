@@ -32,7 +32,7 @@ AIA comes with a few options which can be accessed from the Blizzard Interface w
 
 ## Feedback
 
-You can [report issues on Curseforge](https://wow.curseforge.com/projects/aia/issues) or [contact me directly through my Battle.net community](https://blizzard.com/invite/WqRG7EUgOR).
+You can [report issues on Curseforge](https://wow.curseforge.com/projects/aia/issues) or contact me directly through my [Battle.net community](https://blizzard.com/invite/WqRG7EUgOR).
 
 ## Localisation
 
