@@ -24,8 +24,11 @@ AIA comes with a few options which can be accessed from the Blizzard Interface w
 * **Declined** - If selected, AIA will also set any events you have declined to accepted. Obviously this is disabled by default.
 * **Tentative** - Same as Declined, but for Tentative status.
 * **Invited** - This is the default status when you get invited to an event. If you want AIA to automatically accept any new events, leave this enabled.
-* **Only Accept Invites From** - Here you can write a player name (e.g your guild master / raid leader), and if the calendar invite is not from that player, AIA will ignore it.
-* **Only Accept invites with title** - If the name of the event doesn't match this, AIA will ignore it.
+* **Only Accept Invites Sent By** - Here you can enter a name or mulitple names separated by commas. If the person that created the event doesn't match what you have entered here, it will be ignored.
+* **Only Accept invites with title** - Here you can enter the name of an event you want AIA to accept. You can add multiple events by separating each one with a comma. If an event title doesn't match what you have entered, it is ignored.
+* **Sign Up** - If you have a guild event available for you to sign up to, but you haven't been invited to, you can select this option to have AIA automatically sign you up for it.
+    * **Sign up as Tentative** - You can select this to make these Sign Ups sign up as Tentative rather than as Signed Up.
+    * You can also filter these types of events by the creator name, and event title too, separately to invited events.
 * **Only Accept invites of these types** - Allows you to filter invites by content type. If your guild lists meetings in the calendar as well as raids, you can choose if AIA will accept these types of events too.
 * **Check Again** - If you have changed settings and think AIA might catch some other events to accept you for, you can click this, and AIA will check again. You can also type /aia check to run this same command.
 
