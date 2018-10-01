@@ -1,5 +1,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("AIA", "enUS", true)
 
+L["Accept Invites Automatically"] = true
+
 L["Disable After Running"] = true
 L["Sets AIA to disable itself when it has accepted all the invites it is allowed to."] = true
 L["Notify when disabling"] = true
@@ -15,11 +17,21 @@ L["Invited"] = true
 L["Accepts calendar invites where you haven't replied."] = true
 
 
-L["Only Accept Invites From:"] = true
-L["Only accept invites if they were sent from this player."] = true
+L["Only accept invites sent by:"] = true
+L["Only accept event invites if they were sent by this player."] = true
 L["Leave blank to allow all."] = true
-L["Only Accept invites with title:"] = true
-L["Only accept invites if the title of the event matches this."] = true
+L["You can enter multiple names by separating each one with a comma."] = true
+L["Only accept invites with title:"] = true
+L["Only accept event invites if the title of the event matches this."] = true
+L["You can enter multiple events by separating each one with a comma."] = true
+L["Sign Up"] = true
+L["Sign Up to events that you are not signed up to."] = true
+L["Sign up as Tentative"] = true
+L["Set yourself to |cFFFF8019Tentative|r for events AIA signs you up for."] = true
+L["Only sign up to events created by:"] = true
+L["Only sign up to events if they were created by this player."] = true
+L["Only sign up to events with title:"] = true
+L["Only sign up to events if the title of the event matches this."] = true
 L["Only Accept invites of these types:"] = true
 L["Only accept invites if the event type matches this."] = true
 L["Raid"] = true 
