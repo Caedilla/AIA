@@ -8,3 +8,4 @@
 ### Fixed
 * /aia check should no longer open the configuration panel as well as running the check again.
 * AIA should more reliably find events when you first login now.
+* AIA Should now also check guild events, not just individual events.
