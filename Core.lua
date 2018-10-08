@@ -308,7 +308,6 @@ function AIA:Filter(List, Compare) -- AIA.db.profile.Filter.Name , event.invited
 	local Names = AIA:SplitString(List)
 	if not string.match(List,'%a') then return true end -- If the user didn't enter any letters, there can't be any names, so just ignore it.
 	for i = 1,#Names do
-		print(Names[i])
 		if Names[i] == string.lower(Compare) then return true end
 	end
 	return false
@@ -324,10 +323,16 @@ function AIA:EventChecker(event)
 end
 
 function AIA:CreateCalendarList()
-    wipe(InvitesToAccept)
-	for i = 0,12 do
-		for j = 1,31 do
-			for index = 1,30 do
+	wipe(InvitesToAccept)
+	local CalendarDate = C_Calendar.GetDate()
+	-- CalendarDate.year
+	-- CalendarDate.hour
+	-- CalendarDate.minute
+	-- CalendarDate.month
+	-- CalendarDate.monthDay
+	for i = 0,1 do
+		for j = 1,31 do -- Day
+			for index = 1,30 do -- Index of events on that day
 				local event = C_Calendar.GetDayEvent(i,j,index) or nil
 				if event then
 					if event.calendarType == "PLAYER" or event.calendarType == "GUILD_EVENT" then
@@ -348,6 +353,20 @@ function AIA:CreateCalendarList()
 							if AIA:Filter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then break end
 						end
 						if AIA:EventChecker(event) == false then break end
+						--event.startTime.monthDay
+						--event.startTime.month
+						--event.startTime.year
+						--event.startTime.hour
+						--event.startTime.minute
+
+						if (event.startTime.year <= CalendarDate.year) and 
+						(event.startTime.month <= CalendarDate.month) and 
+						(event.startTime.monthDay <= CalendarDate.monthDay) and 
+						(event.startTime.hour <= CalendarDate.hour) and 
+						(event.startTime.minute <= CalendarDate.minute) then
+							--print("Time has passed Month:"..i.." Day: "..j)
+							break
+						end
 						local data = {
 							monthOffset = i,
 							day = j,
