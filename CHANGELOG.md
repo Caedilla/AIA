@@ -1,5 +1,6 @@
-# AIA r5-Release
+# AIA r6-Release
 
 ### New
+* AIA should also now be able to track Community events.
 ### Fixed
-* AIA should no longer try to accept past events, resulting in "This event has already occurred" pop up boxes.
+* AIA now runs OnUpdate rather than for a set amount of specific events, with a delayed timer which should prevent any odd pop ups from occuring.
