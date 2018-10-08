@@ -2,7 +2,9 @@ AIA = AIA or LibStub("AceAddon-3.0"):NewAddon("AIA", "AceConsole-3.0", "AceEvent
 local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
 local InvitesToAccept = {}
 local InvitesAccepting = 0
-local InvitesToAcceptNumDone = false
+local enteredWorld = false
+local firstRun = true
+local elapsed = 0
 local Defaults = {
 	profile = {
 		DisableAfterRunning = true,
@@ -32,28 +34,6 @@ local Defaults = {
 		},
 	},
 }
-
---[[
-	CALENDAR_INVITESTATUS_INVITED      = 1
-	CALENDAR_INVITESTATUS_ACCEPTED     = 2
-	CALENDAR_INVITESTATUS_DECLINED     = 3
-	CALENDAR_INVITESTATUS_CONFIRMED    = 4
-	CALENDAR_INVITESTATUS_OUT          = 5
-	CALENDAR_INVITESTATUS_STANDBY      = 6
-	CALENDAR_INVITESTATUS_SIGNEDUP     = 7
-	CALENDAR_INVITESTATUS_NOT_SIGNEDUP = 8
-	CALENDAR_INVITESTATUS_TENTATIVE    = 9
-]]--
-
-
---[[
-C_Calendar.GetDayEvent(i,j,index)
-
-.calendarType == String - One of "PLAYER", "GUILD", "ARENA", "HOLIDAY"
-.invitedBy = Player who invited. "" if calendarType is not "PLAYER"
-.title = Display Name
-.eventType When calendarType is "PLAYER" 0 == Raid, 1 == Dungeon, 2 == PvP, 3 == Meeting, 4 == Other. For other calendarType values, numbers are different.
-]]--
 
 local Options = {
 	type = "group",
@@ -285,11 +265,22 @@ local Options = {
 					func = function()
 						print("|cFFFF2C5AAIA: |r"..L["Checking again!"])
 						InvitesAccepting = 0
-						InvitesToAcceptNumDone = false
 						AIA:Enable()
 						AIA:CreateCalendarList()
 						AIA:AcceptInvite()
 					end,
+				},
+				CheckAgainAfterSpacer = {
+					name = " ",
+					type = "description",
+					width = "normal",
+					order = 51,
+				},
+				FrequencySpacer = {
+					name = " ",
+					type = "description",
+					width = "normal",
+					order = 52,
 				},
 			},
 		},
@@ -322,20 +313,19 @@ function AIA:EventChecker(event)
 	return false
 end
 
-function AIA:CreateCalendarList()
+function AIA:CreateCalendarList(eventName)
+	if eventName == "PLAYER_ENTERING_WORLD" then
+		enteredWorld = true
+	end
+	if enteredWorld == false then return end
 	wipe(InvitesToAccept)
 	local CalendarDate = C_Calendar.GetDate()
-	-- CalendarDate.year
-	-- CalendarDate.hour
-	-- CalendarDate.minute
-	-- CalendarDate.month
-	-- CalendarDate.monthDay
 	for i = 0,1 do
 		for j = 1,31 do -- Day
 			for index = 1,30 do -- Index of events on that day
 				local event = C_Calendar.GetDayEvent(i,j,index) or nil
 				if event then
-					if event.calendarType == "PLAYER" or event.calendarType == "GUILD_EVENT" then
+					if event.calendarType == "PLAYER" or event.calendarType == "GUILD_EVENT" or event.calendarType == "COMMUNITY_EVENT" then
 						if (AIA.db.profile.Types.Invited == true and event.inviteStatus == 1) then end
 						if event.inviteStatus == 2 then break end
 						if (AIA.db.profile.Types.Declined == false and event.inviteStatus == 3) then break end
@@ -353,18 +343,11 @@ function AIA:CreateCalendarList()
 							if AIA:Filter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then break end
 						end
 						if AIA:EventChecker(event) == false then break end
-						--event.startTime.monthDay
-						--event.startTime.month
-						--event.startTime.year
-						--event.startTime.hour
-						--event.startTime.minute
-
 						if (event.startTime.year <= CalendarDate.year) and 
 						(event.startTime.month <= CalendarDate.month) and 
 						(event.startTime.monthDay <= CalendarDate.monthDay) and 
 						(event.startTime.hour <= CalendarDate.hour) and 
 						(event.startTime.minute <= CalendarDate.minute) then
-							--print("Time has passed Month:"..i.." Day: "..j)
 							break
 						end
 						local data = {
@@ -373,18 +356,37 @@ function AIA:CreateCalendarList()
 							index = index,
 						}
 						table.insert(InvitesToAccept,data)
-						if InvitesToAcceptNumDone == false then
-							InvitesAccepting = InvitesAccepting +1
+						if #InvitesToAccept > InvitesAccepting then
+							InvitesAccepting = #InvitesToAccept
 						end
 					end
 				end
 			end
 		end
 	end
-	InvitesToAcceptNumDone = true
+	if #InvitesToAccept > 0 then
+		AIA.Accepter:SetScript("OnUpdate", AIA.AcceptInvite)
+	end
 end
 
-function AIA:AcceptInvite()
+function AIA:AcceptInvite(timer)
+	if timer then
+		if firstRun then -- Delay first run when logging in a little bit.
+			elapsed = elapsed + timer
+			if elapsed > 5 then
+				elapsed = 0
+				firstRun = false
+			else return
+			end
+		elseif timer then
+			elapsed = elapsed + timer
+			if elapsed > 0.05 then
+				elapsed = 0
+			else return
+			end
+		end
+	end
+	if C_Calendar.IsActionPending() then return end
 	if not InvitesToAccept[1] then
 		if AIA.db.profile.NotifyFinish then
 			if InvitesAccepting == 1 then
@@ -415,9 +417,9 @@ function AIA:AcceptInvite()
 	else -- We don't have an event open so open one.
 		C_Calendar.OpenEvent(m,d,i)
 		return
-	end	
+	end
 	if event then
-		if openStatus then			
+		if openStatus then
 			if (AIA.db.profile.Types.Invited == false and openStatus.inviteStatus == 1) then return end
 			if openStatus.inviteStatus == 2 then return end -- Accepted, don't do anything
 			if (AIA.db.profile.Types.Declined == false and openStatus.inviteStatus == 3) then return end
@@ -425,16 +427,18 @@ function AIA:AcceptInvite()
 			if openStatus.inviteStatus == 5 then return end -- Out
 			if openStatus.inviteStatus == 6 then return end -- Standby
 			if openStatus.inviteStatus == 7 then return end -- Signed Up, don't do anything
-			if (AIA.db.profile.Types.SignUp == true and openStatus.inviteStatus == 8) then -- Not Signed Up, Sign Up if Option is selected.
+			if (AIA.db.profile.Types.SignUp == true and openStatus.inviteStatus == 8) then -- Not Signed Up, Sign Up if Option is selected.	
 				if AIA.db.profile.Types.SignUpTentative == true then
 					C_Calendar.EventTentative()
+					return
 				else
 					C_Calendar.EventSignUp()
+					return
 				end
 				return 
 			end
 			if (AIA.db.profile.Types.Tentative == false and openStatus.inviteStatus == 9) then return end
-			C_Calendar.EventAvailable()		
+			C_Calendar.EventAvailable()
 		end
 	end
 end
@@ -442,7 +446,6 @@ end
 function AIA:CheckAgain()
 	print("|cFFFF2C5AAIA: |r"..L["Checking again!"])
 	InvitesAccepting = 0
-	InvitesToAcceptNumDone = false
 	AIA:Enable()
 	AIA:CreateCalendarList()
 	AIA:AcceptInvite()
@@ -467,22 +470,21 @@ function AIA:OnInitialize()
 end
 
 function AIA:OnEnable()
-    AIA.ListMonitor = AIA.ListMonitor or CreateFrame("Frame", "AIA_ListMonitor")
-    AIA.ListMonitor:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
+	AIA.ListMonitor = AIA.ListMonitor or CreateFrame("Frame", "AIA_ListMonitor")
+	AIA.ListMonitor:RegisterEvent("PLAYER_ENTERING_WORLD")
+	AIA.ListMonitor:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
+	AIA.ListMonitor:RegisterEvent("CALENDAR_UPDATE_INVITE_LIST")
+	AIA.ListMonitor:RegisterEvent("CALENDAR_ACTION_PENDING")
     AIA.ListMonitor:SetScript("OnEvent", AIA.CreateCalendarList)
-    
     AIA.Accepter = AIA.Accepter or CreateFrame("Frame", "AIA_Accepter")
-    AIA.Accepter:RegisterEvent("CALENDAR_UPDATE_EVENT_LIST")
-    AIA.Accepter:RegisterEvent("CALENDAR_ACTION_PENDING")
-    AIA.Accepter:RegisterEvent("CALENDAR_OPEN_EVENT")
-    AIA.Accepter:SetScript("OnEvent", AIA.AcceptInvite)
 end
 
 function AIA:OnDisable()
 	AIA.ListMonitor:UnregisterAllEvents()
 	AIA.ListMonitor:SetScript("OnEvent", nil)
 	AIA.Accepter:UnregisterAllEvents()
-	AIA.Accepter:SetScript("OnEvent", nil)
+	--AIA.Accepter:SetScript("OnEvent", nil)
+	AIA.Accepter:SetScript("OnUpdate", nil)
 	if AIA.db.profile.NotifyDisable then
 		print("|cFFFF2C5AAIA: |r"..L["No more invites to accept. Shutting down."])
 	end	
