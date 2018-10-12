@@ -114,7 +114,7 @@ function AIA:AcceptInvite(timer)
 		else
 			AIA.Accepter:SetScript("OnUpdate", nil)
 		end
-		wipe(InvitesAccepting)
+		InvitesAccepting = 0
 		return
 	end
 	local m = InvitesToAccept[1].monthOffset
