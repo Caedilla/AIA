@@ -313,51 +313,103 @@ function AIA:EventChecker(event)
 	return false
 end
 
+--- FUNCTION TO CHECK INVITE STATUS
+function AIA:InviteStatus(event)
+	local status = event.inviteStatus
+	-- Invited = 1, Accepted = 2, Declined = 3, Confirmed = 4, Out = 5, Standby = 6, Signed Up = 7, Not Signed Up = 8, Tentative = 9
+	-- event.inviteType = 1 or 2. 1 == Invite, 2 == Sign Up
+	if status == 2 or (status >= 4 and status <= 7) then return false end -- AIA does nothing for these statuses because they're already forms of accepted.
+	if event.inviteType == 1 then
+		if AIA:Filter(AIA.db.profile.Filter.Name, event.invitedBy) == false then return false end
+		if AIA:Filter(AIA.db.profile.Filter.Title, event.title) == false then return false end
+		if status == 1 then
+			if AIA.db.profile.Types.Invited == true then 
+				return true
+			end
+		elseif status == 3 then
+			if AIA.db.profile.Types.Declined == true then 
+				return true
+			end
+		elseif status == 9 then
+			if AIA.db.profile.Types.Tentative == true then 
+				return true
+			end
+		end
+	elseif event.inviteType == 2 then
+		if AIA:Filter(AIA.db.profile.Filter.SignUp.Name, event.invitedBy) == false then return false end
+		if AIA:Filter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then return false end
+		if status == 8 then
+			if AIA.db.profile.Types.SignUp == true then		
+				return true
+			end
+		end
+	end	
+
+	return false
+end
+
+function AIA:DateConversion(date)
+	local year = date.year
+	local month = date.month
+	local monthDay = date.monthDay
+	local hour = date.hour
+	local minute = date.minute
+
+	month = AIA:AddZero(month)
+	monthDay = AIA:AddZero(monthDay)
+	hour = AIA:AddZero(hour)
+	minute = AIA:AddZero(minute)
+
+	local returnDate = year..month..monthDay..hour..minute
+	returnDate = tonumber(returnDate)
+	return returnDate
+end
+
+function AIA:AddZero(number)
+	local string = tostring(number)
+	if tonumber(string) < 10 then
+		string = "0"..string
+	end
+	return string
+end
+
+--[[
+	C_Calendar.GetDayEvent(i,j,index)
+	.calendarType == String - One of "PLAYER", "GUILD_EVENT", "ARENA", "HOLIDAY", "COMMUNITY_EVENT"
+	.invitedBy = Player who invited. "" if calendarType is not "PLAYER"
+	.title = Display Name
+	.eventType When calendarType is "PLAYER" 0 == Raid, 1 == Dungeon, 2 == PvP, 3 == Meeting, 4 == Other. For other calendarType values, numbers are different.
+]]--
+
 function AIA:CreateCalendarList(eventName)
 	if eventName == "PLAYER_ENTERING_WORLD" then
 		enteredWorld = true
 	end
 	if enteredWorld == false then return end
 	wipe(InvitesToAccept)
-	local CalendarDate = C_Calendar.GetDate()
 	for i = 0,1 do
+		local currentDate = date("%Y%m%d%H%M")
+		currentDate = tonumber(currentDate)
 		for j = 1,31 do -- Day
-			for index = 1,30 do -- Index of events on that day
+			for index = 1,10 do -- Index of events on that day
 				local event = C_Calendar.GetDayEvent(i,j,index) or nil
 				if event then
+					if event.isLocked then break end -- We can't sign up to events that are locked.
 					if event.calendarType == "PLAYER" or event.calendarType == "GUILD_EVENT" or event.calendarType == "COMMUNITY_EVENT" then
-						if (AIA.db.profile.Types.Invited == true and event.inviteStatus == 1) then end
-						if event.inviteStatus == 2 then break end
-						if (AIA.db.profile.Types.Declined == false and event.inviteStatus == 3) then break end
-						if event.inviteStatus == 4 then break end
-						if event.inviteStatus == 5 then break end
-						if event.inviteStatus == 6 then break end
-						if event.inviteStatus == 7 then break end
-						if (AIA.db.profile.Types.SignUp == false and event.inviteStatus == 8) then break end
-						if (AIA.db.profile.Types.Tentative == false and event.inviteStatus == 9) then break end
-						if event.inviteStatus ~= 8 then
-							if AIA:Filter(AIA.db.profile.Filter.Name, event.invitedBy) == false then break end
-							if AIA:Filter(AIA.db.profile.Filter.Title, event.title) == false then break end
-						else
-							if AIA:Filter(AIA.db.profile.Filter.SignUp.Name, event.invitedBy) == false then break end
-							if AIA:Filter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then break end
-						end
-						if AIA:EventChecker(event) == false then break end
-						if (event.startTime.year <= CalendarDate.year) and 
-						(event.startTime.month <= CalendarDate.month) and 
-						(event.startTime.monthDay <= CalendarDate.monthDay) and 
-						(event.startTime.hour <= CalendarDate.hour) and 
-						(event.startTime.minute <= CalendarDate.minute) then
-							break
-						end
-						local data = {
-							monthOffset = i,
-							day = j,
-							index = index,
-						}
-						table.insert(InvitesToAccept,data)
-						if #InvitesToAccept > InvitesAccepting then
-							InvitesAccepting = #InvitesToAccept
+						if AIA:DateConversion(event.startTime) > currentDate then
+							if AIA:EventChecker(event) == true then
+								if AIA:InviteStatus(event) == true then
+									local data = {
+										monthOffset = i,
+										day = j,
+										index = index,
+									}
+									table.insert(InvitesToAccept,data)
+									if #InvitesToAccept > InvitesAccepting then
+										InvitesAccepting = #InvitesToAccept
+									end
+								end
+							end
 						end
 					end
 				end
@@ -420,24 +472,28 @@ function AIA:AcceptInvite(timer)
 	end
 	if event then
 		if openStatus then
-			if (AIA.db.profile.Types.Invited == false and openStatus.inviteStatus == 1) then return end
-			if openStatus.inviteStatus == 2 then return end -- Accepted, don't do anything
-			if (AIA.db.profile.Types.Declined == false and openStatus.inviteStatus == 3) then return end
-			if openStatus.inviteStatus == 4 then return end -- Confirmed, don't do anything
-			if openStatus.inviteStatus == 5 then return end -- Out
-			if openStatus.inviteStatus == 6 then return end -- Standby
-			if openStatus.inviteStatus == 7 then return end -- Signed Up, don't do anything
-			if (AIA.db.profile.Types.SignUp == true and openStatus.inviteStatus == 8) then -- Not Signed Up, Sign Up if Option is selected.	
-				if AIA.db.profile.Types.SignUpTentative == true then
-					C_Calendar.EventTentative()
-					return
-				else
-					C_Calendar.EventSignUp()
-					return
+			if event.inviteType == 1 then
+				if (AIA.db.profile.Types.Invited == false and openStatus.inviteStatus == 1) then return end
+				if openStatus.inviteStatus == 2 then return end -- Accepted, don't do anything
+				if (AIA.db.profile.Types.Declined == false and openStatus.inviteStatus == 3) then return end
+				if openStatus.inviteStatus == 4 then return end -- Confirmed, don't do anything
+				if openStatus.inviteStatus == 5 then return end -- Out
+				if openStatus.inviteStatus == 6 then return end -- Standby
+				if openStatus.inviteStatus == 7 then return end -- Signed Up, don't do anything
+				if (AIA.db.profile.Types.Tentative == false and openStatus.inviteStatus == 9) then return end
+			elseif event.inviteType == 2 then
+				if (AIA.db.profile.Types.SignUp == true and openStatus.inviteStatus == 8) then -- Not Signed Up, Sign Up if Option is selected.	
+					if AIA.db.profile.Types.SignUpTentative == true then
+						C_Calendar.EventTentative()
+						return
+					else
+						C_Calendar.EventSignUp()
+						return
+					end
+					return 
 				end
-				return 
 			end
-			if (AIA.db.profile.Types.Tentative == false and openStatus.inviteStatus == 9) then return end
+			
 			C_Calendar.EventAvailable()
 		end
 	end
@@ -452,7 +508,7 @@ function AIA:CheckAgain()
 end
 
 function AIA:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("AIADB", Defaults, true) -- Setup Saved Variables	
+	self.db = LibStub("AceDB-3.0"):New("AIADB", Defaults) -- Setup Saved Variables	
 	self:RegisterChatCommand("AIA", "ChatCommand") -- Register /AIA command
 
 	-- Add Options
