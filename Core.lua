@@ -86,7 +86,7 @@ function AIA:AcceptInvite(timer)
 	if timer then
 		if firstRun then -- Delay first run when logging in a little bit.
 			elapsed = elapsed + timer
-			if elapsed > 5 then
+			if elapsed > 15 then
 				elapsed = 0
 				firstRun = false
 			else return

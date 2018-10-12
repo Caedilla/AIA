@@ -281,7 +281,7 @@ function AIA_Options:OnEnable()
 	-- Add Options
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
     local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,775)
+    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,790)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 
