@@ -111,6 +111,8 @@ function AIA:AcceptInvite(timer)
 		end		
 		if AIA.db.profile.DisableAfterRunning == true then
 			AIA:Disable()
+		else
+			AIA.Accepter:SetScript("OnUpdate", nil)
 		end
 		return
 	end
@@ -168,7 +170,6 @@ function AIA:OnDisable()
 	AIA.ListMonitor:UnregisterAllEvents()
 	AIA.ListMonitor:SetScript("OnEvent", nil)
 	AIA.Accepter:UnregisterAllEvents()
-	--AIA.Accepter:SetScript("OnEvent", nil)
 	AIA.Accepter:SetScript("OnUpdate", nil)
 	if AIA.db.profile.NotifyDisable then
 		print("|cFFFF2C5AAIA: |r"..L["No more invites to accept. Shutting down."])
