@@ -1,6 +1,9 @@
-# AIA r6-Release
+# AIA r7-Release
 
-### New
-* AIA should also now be able to track Community events.
+### Changed
+* AIA default profiles are now per-character rather than account wide.
+
 ### Fixed
-* AIA now runs OnUpdate rather than for a set amount of specific events, with a delayed timer which should prevent any odd pop ups from occuring.
+* AIA should now properly check the date of an event and ignore past events.
+* AIA should no longer get stuck if tentative and sign up as tentative are selected
+* AIA should no longer skip over other actionable events that occur on the same day as an event that AIA has ignored.
