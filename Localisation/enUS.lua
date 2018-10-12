@@ -4,6 +4,7 @@ L["Accept Invites Automatically"] = true
 
 L["Disable After Running"] = true
 L["Sets AIA to disable itself when it has accepted all the invites it is allowed to."] = true
+L["If left unchecked, AIA will continue to scan and accept any new calendar events while you are playing."] = true
 L["Notify when disabling"] = true
 L["Sets if AIA should send a message to the chat window when it is disabled."] = true
 L["Notify when finished"] = true

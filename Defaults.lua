@@ -3,7 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
 
 local Defaults = {
 	profile = {
-		DisableAfterRunning = false,
+		DisableAfterRunning = true,
 		NotifyDisable = true,
 		NotifyFinish = true,
 		NotifyOnlyAccepted = true,
