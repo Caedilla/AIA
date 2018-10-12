@@ -3,9 +3,10 @@ local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
 
 local Defaults = {
 	profile = {
-		DisableAfterRunning = true,
+		DisableAfterRunning = false,
 		NotifyDisable = true,
 		NotifyFinish = true,
+		NotifyOnlyAccepted = true,
 		Types = {
 			Tentative = false,
 			Declined = false,

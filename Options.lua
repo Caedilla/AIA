@@ -16,7 +16,7 @@ local Options = {
 			order = 0,
 			args = {
 				DisableAfterRunning = {
-					name = "|cFF37C5FF"..L["Disable After Running"].."|r",
+					name = "|cFF00b2fa"..L["Disable After Running"].."|r",
 					desc = L["Sets AIA to disable itself when it has accepted all the invites it is allowed to."],
 					descStyle = "inline",
 					width = "full",
@@ -30,7 +30,7 @@ local Options = {
 					end,
 				},
 				NotifyDisable = {
-					name = "|cFF80DAFF"..L["Notify when disabling"].."|r",
+					name = "|cFF00b2fa"..L["Notify when disabling"].."|r",
 					desc = L["Sets if AIA should send a message to the chat window when it is disabled."],
 					descStyle = "inline",
 					width = "full",
@@ -44,7 +44,7 @@ local Options = {
 					end,
 				},
 				NotifyFinish = {
-					name = "|cFF80DAFF"..L["Notify when finished"].."|r",
+					name = "|cFF00b2fa"..L["Notify when finished"].."|r",
 					desc = L["Sets if AIA should send a message to the chat window when it has finished."],
 					descStyle = "inline",
 					width = "full",
@@ -55,6 +55,23 @@ local Options = {
 					end,
 					set = function(info, value)
 						AIA.db.profile.NotifyFinish = value
+					end,
+				},
+				OnlyNotifyIfAccepted = {
+					name = "|cFF00b2fa"..L["Notify onlly accepted invites"].."|r",
+					desc = L["AIA will only notify when finished if there were any invites to accept."],
+					descStyle = "inline",
+					width = "full",
+					order = 1,
+					type = "toggle",
+					disabled = function()
+						if AIA.db.profile.NotifyFinish == false then return true end
+					end,
+					get = function(info)
+						return AIA.db.profile.NotifyOnlyAccepted
+					end,
+					set = function(info, value)
+						AIA.db.profile.NotifyOnlyAccepted = value
 					end,
 				},
 				Tentative = {
@@ -130,7 +147,7 @@ local Options = {
 					end,
 				},
 				SignUp = {
-					name = "|cFF00A98A"..L["Sign Up"].."|r",
+					name = "|cFF91be0f"..L["Sign Up"].."|r",
 					desc = L["Sign Up to events that you are not signed up to."],
 					descStyle = "inline",
 					width = "full",
@@ -144,13 +161,13 @@ local Options = {
 					end,
 				},
 				SignUpTentative = {
-					name = "|cFF00A98A"..L["Sign up as Tentative"].."|r",
+					name = "|cFF91be0f"..L["Sign up as Tentative"].."|r",
 					desc = L["Set yourself to |cFFFF8019Tentative|r for events AIA signs you up for."],
 					descStyle = "inline",
 					width = "full",
 					order = 31,
 					type = "toggle",
-					hidden = function()
+					disabled = function()
 						if AIA.db.profile.Types.SignUp == false then return true end
 					end,
 					get = function(info)
@@ -161,11 +178,11 @@ local Options = {
 					end,
 				},
 				Filter_SignUp_Name = {
-					name = "|cFF00A98A"..L["Only sign up to events created by:"].."|r",
+					name = "|cFF91be0f"..L["Only sign up to events created by:"].."|r",
 					desc = L["Only sign up to events if they were created by this player."].."\n"..L["Leave blank to allow all."].."\n"..L["You can enter multiple names by separating each one with a comma."],
 					order = 33,
 					type = "input",
-					hidden = function()
+					disabled = function()
 						if AIA.db.profile.Types.SignUp == false then return true end
 					end,
 					get = function(info)
@@ -185,7 +202,7 @@ local Options = {
 					end,
 				},
 				Filter_SignUp_Title = {
-					name = "|cFF00A98A"..L["Only sign up to events with title:"].."|r",
+					name = "|cFF91be0f"..L["Only sign up to events with title:"].."|r",
 					desc = L["Only sign up to events if the title of the event matches this."].."\n"..L["Leave blank to allow all."].."\n"..L["You can enter multiple events by separating each one with a comma."],
 					order = 35,
 					type = "input",
@@ -225,7 +242,7 @@ local Options = {
 					order = 45,
 				},
 				CheckAgain = {
-					name = "|cFF80DAFF"..L["Check Again"].."|r",
+					name = "|cFF40c840"..L["Check Again"].."|r",
 					desc = L["Makes AIA Check if there is anything to accept now."],
 					order = 50,
 					type = "execute",
@@ -264,7 +281,7 @@ function AIA_Options:OnEnable()
 	-- Add Options
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
     local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,730)
+    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,750)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 

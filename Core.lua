@@ -105,7 +105,7 @@ function AIA:AcceptInvite(timer)
 		if AIA.db.profile.NotifyFinish then
 			if InvitesAccepting == 1 then
 				print("|cFFFF2C5AAIA: |r"..L["Accepted "]..InvitesAccepting..L[" calendar invite."])
-			else
+			elseif (AIA.db.profile.NotifyOnlyAccepted and InvitesAccepting > 0) or not AIA.db.profile.NotifyOnlyAccepted then
 				print("|cFFFF2C5AAIA: |r"..L["Accepted "]..InvitesAccepting..L[" calendar invites."])
 			end
 		end		
