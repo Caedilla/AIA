@@ -49,3 +49,5 @@ L[" calendar invite."] = true
 L[" calendar invites."] = true
 L["No more invites to accept. Shutting down."] = true
 L["Cannot configure while in combat."] = true
+
+L["Open Configuration Panel"] = true

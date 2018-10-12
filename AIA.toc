@@ -12,4 +12,8 @@ embeds.xml
 #@end-no-lib-strip@
 
 Localisation\enUS.lua
+Init.lua
+Defaults.lua
+Utilities.lua
+Options.lua
 Core.lua
