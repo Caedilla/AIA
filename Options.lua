@@ -206,7 +206,7 @@ local Options = {
 					desc = L["Only sign up to events if the title of the event matches this."].."\n"..L["Leave blank to allow all."].."\n"..L["You can enter multiple events by separating each one with a comma."],
 					order = 35,
 					type = "input",
-					hidden = function()
+					disabled = function()
 						if AIA.db.profile.Types.SignUp == false then return true end
 					end,
 					get = function(info)
@@ -281,7 +281,7 @@ function AIA_Options:OnEnable()
 	-- Add Options
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
     local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,750)
+    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,775)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 
