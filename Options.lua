@@ -218,7 +218,7 @@ local Options = {
 						if AIA.db.profile.Types.SignUp == false then
 							return L["Only sign up to events with title:"]
 						else
-							return "|cFF91be0f"..L["Only sign up to events with title:"].."|r",
+							return "|cFF91be0f"..L["Only sign up to events with title:"].."|r"
 						end
 					end,
 					desc = L["Only sign up to events if the title of the event matches this."].."\n"..L["Leave blank to allow all."].."\n"..L["You can enter multiple events by separating each one with a comma."],
