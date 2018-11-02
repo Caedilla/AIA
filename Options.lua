@@ -161,7 +161,13 @@ local Options = {
 					end,
 				},
 				SignUpTentative = {
-					name = "|cFF91be0f"..L["Sign up as Tentative"].."|r",
+					name = function()
+						if AIA.db.profile.Types.SignUp == false then
+							return L["Sign up as Tentative"]
+						else
+							return "|cFF91be0f"..L["Sign up as Tentative"].."|r"
+						end
+					end,
 					desc = L["Set yourself to |cFFFF8019Tentative|r for events AIA signs you up for."],
 					descStyle = "inline",
 					width = "full",
@@ -178,7 +184,13 @@ local Options = {
 					end,
 				},
 				Filter_SignUp_Name = {
-					name = "|cFF91be0f"..L["Only sign up to events created by:"].."|r",
+					name = function()
+						if AIA.db.profile.Types.SignUp == false then
+							return L["Only sign up to events created by:"]
+						else
+							return "|cFF91be0f"..L["Only sign up to events created by:"].."|r"
+						end
+					end,
 					desc = L["Only sign up to events if they were created by this player."].."\n"..L["Leave blank to allow all."].."\n"..L["You can enter multiple names by separating each one with a comma."],
 					order = 33,
 					type = "input",
@@ -202,7 +214,13 @@ local Options = {
 					end,
 				},
 				Filter_SignUp_Title = {
-					name = "|cFF91be0f"..L["Only sign up to events with title:"].."|r",
+					name = function()
+						if AIA.db.profile.Types.SignUp == false then
+							return L["Only sign up to events with title:"]
+						else
+							return "|cFF91be0f"..L["Only sign up to events with title:"].."|r",
+						end
+					end,
 					desc = L["Only sign up to events if the title of the event matches this."].."\n"..L["Leave blank to allow all."].."\n"..L["You can enter multiple events by separating each one with a comma."],
 					order = 35,
 					type = "input",
