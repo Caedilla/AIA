@@ -1,8 +1,3 @@
-# AIA r8-Release
-
-### Changed
-* Split AIA's code up to be more manageable.
-* Options now only load when needed.
-
+# AIA r9-Alpha
 ### Fixed
-* AIA should now properly notify you again if there were no calendar invites to accept upon login.
+* Fixed some odd display spacing in configuration panel when certain options were disabled.
