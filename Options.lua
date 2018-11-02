@@ -197,7 +197,7 @@ local Options = {
 					type = "description",
 					width = "normal",
 					order = 34,
-					hidden = function()
+					disabled = function()
 						if AIA.db.profile.Types.SignUp == false then return true end
 					end,
 				},
