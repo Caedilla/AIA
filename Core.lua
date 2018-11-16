@@ -173,6 +173,8 @@ function AIA:OnDisable()
 	AIA.Accepter:UnregisterAllEvents()
 	AIA.Accepter:SetScript("OnUpdate", nil)
 	if AIA.db.profile.NotifyDisable then
-		print("|cFFFF2C5AAIA: |r"..L["No more invites to accept. Shutting down."])
+		if (AIA.db.profile.NotifyOnlyAccepted and InvitesAccepting > 0) or not AIA.db.profile.NotifyOnlyAccepted then
+			print("|cFFFF2C5AAIA: |r"..L["No more invites to accept. Shutting down."])
+		end
 	end	
 end
