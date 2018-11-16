@@ -9,7 +9,7 @@ L["Notify when disabling"] = true
 L["Sets if AIA should send a message to the chat window when it is disabled."] = true
 L["Notify when finished"] = true
 L["Sets if AIA should send a message to the chat window when it has finished."] = true
-L["Notify onlly accepted invites"] = true
+L["Notify only accepted invites"] = true
 L["AIA will only notify when finished if there were any invites to accept."] = true
 
 L["Tentative"] = true

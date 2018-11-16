@@ -58,7 +58,7 @@ local Options = {
 					end,
 				},
 				OnlyNotifyIfAccepted = {
-					name = "|cFF00b2fa"..L["Notify onlly accepted invites"].."|r",
+					name = "|cFF00b2fa"..L["Notify only accepted invites"].."|r",
 					desc = L["AIA will only notify when finished if there were any invites to accept."],
 					descStyle = "inline",
 					width = "full",
