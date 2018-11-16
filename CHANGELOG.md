@@ -1,4 +1,4 @@
-# AIA r9-Release
+# AIA r10-Release
 ### Fixed
-* Fixed some odd display spacing in configuration panel when certain options were disabled.
-* Disabled Options should now correctly grey out to better signal that they are unavailable.
+* Fixed the Notify only accepted invites option to actually only send a notification if there were invites to accept.
+* Fixed some misspellings.
