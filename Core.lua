@@ -16,13 +16,26 @@ end
 
 function AIA:InviteStatus(event)
 	if not event then return end
+	if event.calendarType ~= "PLAYER" and event.calendarType ~= "GUILD_EVENT" and event.calendarType ~= "COMMUNITY_EVENT" then return end
 	local status = event.inviteStatus
+	local creatorName = 0
+	if event.creator then
+		if string.len(event.creator) > 0 then
+			creatorName = event.creator
+		end
+	elseif event.invitedBy then
+		if string.len(event.invitedBy) > 0 then
+			creatorName = event.invitedBy
+		end
+	else 
+		return
+	end
+	if creatorName == 0 then return end
 	if not status then return end
-
 	if status == 2 or (status >= 4 and status <= 7) then return false end -- AIA does nothing for these statuses because they're already forms of accepted.
 	-- Statuses: Invited = 1, Accepted = 2, Declined = 3, Confirmed = 4, Out = 5, Standby = 6, Signed Up = 7, Not Signed Up = 8, Tentative = 9
 	if event.inviteType == 1 then -- If the event is invite only or sign up. 1 == Invite, 2 == Sign Up
-		if AIA:Filter(AIA.db.profile.Filter.Name, event.invitedBy) == false then return false end
+		if AIA:Filter(AIA.db.profile.Filter.Name, creatorName) == false then return false end
 		if AIA:Filter(AIA.db.profile.Filter.Title, event.title) == false then return false end
 		if status == 1 then
 			if AIA.db.profile.Types.Invited == true then 
@@ -38,7 +51,7 @@ function AIA:InviteStatus(event)
 			end
 		end
 	elseif event.inviteType == 2 then
-		if AIA:Filter(AIA.db.profile.Filter.SignUp.Name, event.invitedBy) == false then return false end
+		if AIA:Filter(AIA.db.profile.Filter.SignUp.Name, creatorName) == false then return false end
 		if AIA:Filter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then return false end
 		if status == 8 then
 			if AIA.db.profile.Types.SignUp == true then		

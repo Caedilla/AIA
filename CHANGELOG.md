@@ -1,4 +1,3 @@
-# AIA r10-Release
+# AIA r11-Release
 ### Fixed
-* Fixed the Notify only accepted invites option to actually only send a notification if there were invites to accept.
-* Fixed some misspellings.
+* Fixed an issue that would cause errors with name filtering (ticket #3)

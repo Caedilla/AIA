@@ -11,6 +11,8 @@ end
 
 function AIA:Filter(List, Compare)
 	-- Compare user entered name or names to whoever the event creator/inviter was.
+	if not Compare or Compare == "" then return false end
+	if not List or List == "" then return false end
 	local Names = AIA:SplitString(List)
 	if not string.match(List,'%a') then return true end -- If the user didn't enter any letters, there can't be any names, so just ignore it even if there is something else there.
 	for i = 1,#Names do
