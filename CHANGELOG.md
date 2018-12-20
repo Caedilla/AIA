@@ -1,3 +1,3 @@
-# AIA r11-Release
-### Fixed
-* Fixed an issue that would cause errors with name filtering (ticket #3)
+# AIA r12-Release
+### Changed
+* Updated interface version for 8.1
