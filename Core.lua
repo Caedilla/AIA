@@ -65,12 +65,13 @@ end
 
 function AIA:CreateCalendarList(eventName)
 	if eventName == "PLAYER_ENTERING_WORLD" then 
+		C_Calendar.OpenCalendar()
 		enteredWorld = true
 	end
 	if enteredWorld == false then return end
 	wipe(InvitesToAccept)
+	currentDate = tonumber(date("%Y%m%d%H%M"))
 	for i = 0,1 do -- This month, and next month only.
-		currentDate = tonumber(date("%Y%m%d%H%M"))
 		for j = 1,31 do -- Day
 			for index = 1,10 do -- Index of events on that day
 				local event = C_Calendar.GetDayEvent(i,j,index) or nil
