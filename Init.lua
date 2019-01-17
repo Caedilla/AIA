@@ -62,4 +62,6 @@ end
 
 function AIA:RefreshConfig()
 	AIA.db.profile = self.db.profile
+	AIA:LDBDisplayState()
+	AIA:LDBLockState()
 end
