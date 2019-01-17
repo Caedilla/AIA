@@ -13,7 +13,7 @@ local Options = {
 		Filters = {
 			name = L["Filtering"],
 			type = "group",
-			order = 0,
+			order = 1,
 			args = {
 				Status = {
 					name = L["Filter by status:"],
@@ -211,7 +211,7 @@ local Options = {
 		Notifications = {
 			name = L["Notifications"],
 			type = "group",
-			order = 1,
+			order = 0,
 			args = {
 				DisableAfterRunning = {
 					name = "|cFF91be0f"..L["Disable After Running"].."|r",
@@ -321,9 +321,15 @@ local Options = {
 			order = 60,
 			args = {
 				Display = {
-					name = "|cFF82d836"..L["Hide Minimap Icon"].."|r",
+					name = function()
+						if AIA.db.profile.Minimap.hide then
+							return "|cFFd83636"..L["Hide Minimap Icon"].."|r"
+						else
+							return "|cFF82d836"..L["Hide Minimap Icon"].."|r"
+						end
+					end,
 					desc = L["Even if the minimap button is disabled, AIA still provides an LDB plugin if you want it to be displayed with addons such as StatBlockCore or TitanPanel."],
-					width = 1.5,
+					width = 3,
 					order = 0,
 					type = "toggle",
 					get = function(info)
@@ -335,9 +341,15 @@ local Options = {
 					end,
 				},
 				Lock = {
-					name = "|cFFd83636"..L["Lock Minimap Icon"].."|r",
-					width = 1.5,
-					order = 0,
+					name = function()
+						if AIA.db.profile.Minimap.lock then
+							return "|cFFd83636"..L["Lock Minimap Icon"].."|r"
+						else
+							return "|cFF82d836"..L["Lock Minimap Icon"].."|r"
+						end
+					end,
+					width = 3,
+					order = 1,
 					type = "toggle",
 					get = function(info)
 						return AIA.db.profile.Minimap.lock
@@ -446,7 +458,7 @@ function AIA_Options:OnEnable()
 	-- Add Options
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
     local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",590,810)
+    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",590,715)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 
