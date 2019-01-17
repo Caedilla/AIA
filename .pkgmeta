@@ -26,6 +26,8 @@ externals:
   url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
  Libs/AceLocale-3.0:
   url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
+ Libs/LibDBIcon-1.0:
+  url: svn://repos.wowace.com/wow/libdbicon-1-0/trunk
 	
 ignore:
  - .pkgmeta
