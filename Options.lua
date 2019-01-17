@@ -11,7 +11,7 @@ local Options = {
 	childGroups = "tab",
 	args = {
 		Main = {
-			name = "Options",
+			name = L["Options"],
 			type = "group",
 			order = 0,
 			args = {
@@ -174,29 +174,6 @@ local Options = {
 						AIA.db.profile.Types.SignUp = value
 					end,
 				},
-				SignUpTentative = {
-					name = function()
-						if AIA.db.profile.Types.SignUp == false then
-							return L["Sign up as Tentative"]
-						else
-							return "|cFF91be0f"..L["Sign up as Tentative"].."|r"
-						end
-					end,
-					desc = L["Set yourself to |cFFFF8019Tentative|r for events AIA signs you up for."],
-					descStyle = "inline",
-					width = "full",
-					order = 31,
-					type = "toggle",
-					disabled = function()
-						if AIA.db.profile.Types.SignUp == false then return true end
-					end,
-					get = function(info)
-						return AIA.db.profile.Types.SignUpTentative
-					end,
-					set = function(info, value)
-						AIA.db.profile.Types.SignUpTentative = value
-					end,
-				},
 				Filter_SignUp_Name = {
 					name = function()
 						if AIA.db.profile.Types.SignUp == false then
@@ -297,6 +274,72 @@ local Options = {
 					type = "description",
 					width = "normal",
 					order = 52,
+				},
+			},
+		},
+		LDB = {		
+			name = L["Data Broker"],
+			type = "group",
+			childGroups = "inline",
+			order = 1,
+			args = {
+				MouseInteraction = {
+					name = L["Mouse Button Interaction"],
+					type = "group",
+					order = 0,
+					args = {
+						LeftClick = {
+							name = "|cFFFFCC00"..L["Left Click functionality"].."|r",
+							order = 40,
+							type = "select",
+							values = {
+								[0] = L["Do Nothing"],
+								[1] = L["Check Again"], 
+								[2] = L["Open Calendar"], 
+								[3] = L["Open Options"], 
+							},
+							get = function(info,key)
+								return AIA.db.profile.LDB.LeftClick
+							end,
+							set = function(info, key, value)
+								AIA.db.profile.LDB.LeftClick = value
+							end,
+						},
+						RightClick = {
+							name = "|cFFFFCC00"..L["Right Click functionality"].."|r",
+							order = 41,
+							type = "select",
+							values = {
+								[0] = L["Do Nothing"],
+								[1] = L["Check Again"], 
+								[2] = L["Open Calendar"], 
+								[3] = L["Open Options"], 
+							},
+							get = function(info,key)
+								return AIA.db.profile.LDB.RightClick
+							end,
+							set = function(info, key, value)
+								AIA.db.profile.LDB.RightClick = value
+							end,
+						},
+						MiddleClick = {
+							name = "|cFFFFCC00"..L["Middle Click functionality"].."|r",
+							order = 42,
+							type = "select",
+							values = {
+								[0] = L["Do Nothing"],
+								[1] = L["Check Again"], 
+								[2] = L["Open Calendar"], 
+								[3] = L["Open Options"], 
+							},
+							get = function(info,key)
+								return AIA.db.profile.LDB.MiddleClick
+							end,
+							set = function(info, key, value)
+								AIA.db.profile.LDB.MiddleClick = value
+							end,
+						},
+					},
 				},
 			},
 		},

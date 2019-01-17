@@ -1,5 +1,7 @@
 local AIA = AIA or LibStub("AceAddon-3.0"):NewAddon("AIA", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local LDB = LibStub("LibDataBroker-1.1"):NewDataObject("AIA", {type = "data source", text = "AIA"})
 
 function AIA:TempOptions()
 	local Options = {
@@ -21,16 +23,20 @@ function AIA:TempOptions()
 			},
 		}
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("AIA_Blizz", Options) -- Register Options
-	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("AIA_Blizz", "AIA")
+	self.optionsFrame = AceConfigDialog:AddToBlizOptions("AIA_Blizz", "AIA")
 end
 
 function AIA:ChatCommand(input)
-	if string.lower(input) == "check" then
+	if string.match(string.lower(input),"check") then
 		AIA:CheckAgain()
     else
         if not InCombatLockdown() then
-            self:EnableModule("Options")
-            LibStub("AceConfigDialog-3.0"):Open("AIA")
+			self:EnableModule("Options")
+			if AceConfigDialog.OpenFrames["AIA"] then
+				AceConfigDialog:Close("AIA")
+			else
+				AceConfigDialog:Open("AIA")
+			end
 		else
 			print("|cFFFF2C5AAIA: |r"..L["Cannot configure while in combat."])
 		end
@@ -47,7 +53,9 @@ function AIA:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
     
     -- Add Button to Open AIA's Options panel.
-    AIA:TempOptions()
+	AIA:TempOptions()
+	
+	LDB.text = AIA.db.profile.LDB.DisplayName
 end
 
 function AIA:RefreshConfig()

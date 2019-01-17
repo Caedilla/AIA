@@ -1,12 +1,15 @@
 local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
 local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
+local LDB = LibStub("LibDataBroker-1.1"):GetDataObjectByName("AIA")
 local invitesToAccept = {}
 local invitesAccepted = 0
 local currentDate
 local enteredWorld = false
 local firstRun = true
 local elapsed = 0
-totalEvents = {}
+local totalEvents = {}
+local eventCount = 0
+local sessionAccepted = 0
 
 function AIA:InviteStatus(event)
 	if not event then return end
@@ -26,14 +29,20 @@ function AIA:InviteStatus(event)
 		if status == 1 then
 			if AIA.db.profile.Types.Invited == true then 
 				return true
+			else
+				return "Replied"
 			end
 		elseif status == 3 then
 			if AIA.db.profile.Types.Declined == true then 
 				return true
+			else
+				return "Replied"
 			end
 		elseif status == 9 then
 			if AIA.db.profile.Types.Tentative == true then 
 				return true
+			else
+				return "Replied"
 			end
 		end
 	elseif event.inviteType == 2 then
@@ -49,49 +58,14 @@ function AIA:InviteStatus(event)
 	return false
 end
 
-function AIA:CheckCalendarEvent(event,m,d,i)
-	if not event then return end
-
-	if event.calenderType ~= "PLAYER" and event.calendarType ~= "GUILD_EVENT" and event.calendarType ~= "COMMUNITY_EVENT" then return end
-
-	if AIA:DateConversion(event.startTime) < currentDate then return end -- Only check events that are in the future.
-
-	totalEvents[tostring(m)..tostring(d)..tostring(i)] = true
-
-	if AIA:EventFilter(event) == false then return end
-
-	if AIA:InviteStatus(event) == "Replied" then
-		totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
-		return
-	elseif AIA:InviteStatus(event) == false then 
-		return
-	end
-
-	totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
-
-	if event.isLocked then return end
-
-	local data = {
-		monthOffset = m,
-		day = d,
-		index = i,
-	}
-
-	table.insert(invitesToAccept,data)
-	if #invitesToAccept > invitesAccepted then
-		invitesAccepted = #invitesToAccept
-	end
-
-end
-
 function AIA:CreateCalendarList(eventName)
-
 	if eventName == "PLAYER_ENTERING_WORLD" then
 		-- Force the calendar to update so we can grab data immediately.
 		C_Calendar.OpenCalendar()
 		enteredWorld = true
 	end
 	if enteredWorld == false then return end
+
 	wipe(invitesToAccept)
 	currentDate = tonumber(date("%Y%m%d%H%M"))
 
@@ -102,21 +76,27 @@ function AIA:CreateCalendarList(eventName)
 				if event then
 					if event.calendarType == "PLAYER" or event.calendarType == "GUILD_EVENT" or event.calendarType == "COMMUNITY_EVENT" then
 						if AIA:DateConversion(event.startTime) > currentDate and not event.isLocked then
+
 							totalEvents[tostring(m)..tostring(d)..tostring(i)] = true
+
 							if AIA:InviteStatus(event) == "Replied" then
 								totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
 							end
+
 							if AIA:EventFilter(event) == true and AIA:InviteStatus(event) == true then
 								totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
+
 								local data = {
 									monthOffset = m,
 									day = d,
 									index = i,
 								}
 								table.insert(invitesToAccept,data)
+
 								if #invitesToAccept > invitesAccepted then
 									invitesAccepted = #invitesToAccept
 								end
+
 							end
 						end
 					end
@@ -150,6 +130,8 @@ function AIA:AcceptInvite(timer)
 	if C_Calendar.IsActionPending() then return end
 	
 	if not invitesToAccept[1] then
+		eventCount = AIA:CheckFilteredEventCount(totalEvents) - invitesAccepted
+
 		if AIA.db.profile.NotifyFinish then
 			if (AIA.db.profile.NotifyOnlyAccepted and invitesAccepted > 0) or not AIA.db.profile.NotifyOnlyAccepted then
 				if invitesAccepted == 1 then
@@ -159,19 +141,34 @@ function AIA:AcceptInvite(timer)
 				end
 			end
 		end
+
 		if AIA.db.profile.WarnIgnoredEvents == true then
-			local eventCount = AIA:CheckFilteredEventCount(totalEvents)
-			if (eventCount - invitesAccepted) == 1 then
-				print("|cFFFF2C5AAIA: |r"..eventCount - invitesAccepted..L[" calendar invite has been ignored by AIA due to your filters."])
-			elseif (eventCount - invitesAccepted) > 0 then
-				print("|cFFFF2C5AAIA: |r"..eventCount - invitesAccepted..L[" calendar invites have been ignored by AIA due to your filters."])
+			if eventCount == 1 then
+				print("|cFFFF2C5AAIA: |r"..eventCount..L[" calendar invite has been ignored by AIA due to your filters."])
+			elseif eventCount > 0 then
+				print("|cFFFF2C5AAIA: |r"..eventCount..L[" calendar invites have been ignored by AIA due to your filters."])
 			end
 		end
+
+		if AIA.db.profile.LDB.WarnIgnoredEvents == true then
+			if eventCount == 1 then
+				LDB.text = string.format("|cFFFF2C5A%d|r |cFFFFFFFF"..L["Pending invite"].."|r", eventCount)
+			elseif eventCount > 0 then
+				LDB.text = string.format("|cFFFF2C5A%d|r |cFFFFFFFF"..L["Pending invites"].."|r", eventCount)
+			else
+				LDB.text = AIA.db.profile.LDB.DisplayName
+			end
+		else
+			LDB.text = AIA.db.profile.LDB.DisplayName
+		end
+
 		if AIA.db.profile.DisableAfterRunning == true then
 			AIA:Disable()
 		else
 			AIA.Accepter:SetScript("OnUpdate", nil)
 		end
+
+		sessionAccepted = sessionAccepted + invitesAccepted
 		invitesAccepted = 0
 		return
 	end
@@ -201,15 +198,74 @@ function AIA:AcceptInvite(timer)
 		if event.inviteType == 1 then
 			C_Calendar.EventAvailable()
 		elseif event.inviteType == 2 then
-			if AIA.db.profile.Types.SignUpTentative == true then
-				C_Calendar.EventTentative()
-			else
-				C_Calendar.EventSignUp()
-			end
+			C_Calendar.EventSignUp()
 		end
 	end
 
 end
+
+function LDB:OnTooltipShow()
+	self:AddLine("|cFFFF2C5AAIA|r")
+	self:AddLine(" ")
+	if eventCount == 1 then		
+		self:AddLine(string.format("|cFFFF2C5A%d|r |cFFFFFFFF"..L["Pending invite"].."|r", eventCount))
+	elseif eventCount > 0 then
+		self:AddLine(string.format("|cFFFF2C5A%d|r |cFFFFFFFF"..L["Pending invites"].."|r", eventCount))
+	end
+	if sessionAccepted == 1 then
+		self:AddLine(string.format("|cFFFFBE19%d|r |cFFFFFFFF"..L["invite accepted this session"].."|r", sessionAccepted))
+	elseif sessionAccepted > 0 then
+		self:AddLine(string.format("|cFFFFBE19%d|r |cFFFFFFFF"..L["invites accepted this session"].."|r", sessionAccepted))
+	else
+		self:AddLine("|cFFFFFFFF"..L["No new invites accepted this session"].."|r")
+	end	
+end
+
+function LDB:OnClick(button)
+	local left = AIA.db.profile.LDB.LeftClick
+	local right = AIA.db.profile.LDB.RightClick
+	local middle = AIA.db.profile.LDB.MiddleClick
+	if button == "LeftButton" then
+		if left == 0 then return
+		elseif left == 1 then
+			AIA:CheckAgain()
+		elseif left == 2 then
+			GameTimeFrame:Click()
+		elseif left == 3 then
+			AIA:ChatCommand("Open")
+		end
+	elseif button == "RightButton" then
+		if right == 0 then return
+		elseif right == 1 then
+			AIA:CheckAgain()
+		elseif right == 2 then
+			GameTimeFrame:Click()
+		elseif right == 3 then
+			AIA:ChatCommand("Open")
+		end
+	elseif button == "MiddleButton" then
+		if middle == 0 then return
+		elseif middle == 1 then
+			AIA:CheckAgain()
+		elseif middle == 2 then
+			GameTimeFrame:Click()
+		elseif middle == 3 then
+			AIA:ChatCommand("Open")
+		end
+	end
+end
+
+function LDB:OnEnter()
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+	GameTooltip:ClearLines()
+	GameTooltip:Show()
+end
+
+function LDB:OnLeave()
+	GameTooltip:Hide()
+end
+
 
 function AIA:CheckAgain()
 	print("|cFFFF2C5AAIA: |r"..L["Checking again!"])

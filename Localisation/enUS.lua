@@ -1,6 +1,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("AIA", "enUS", true)
 
 L["Accept Invites Automatically"] = true
+L["Options"] = true
 
 L["Disable After Running"] = true
 L["Sets AIA to disable itself when it has accepted all the invites it is allowed to."] = true
@@ -29,8 +30,6 @@ L["Only accept event invites if the title of the event matches this."] = true
 L["You can enter multiple events by separating each one with a comma."] = true
 L["Sign Up"] = true
 L["Sign Up to events that you are not signed up to."] = true
-L["Sign up as Tentative"] = true
-L["Set yourself to |cFFFF8019Tentative|r for events AIA signs you up for."] = true
 L["Only sign up to events created by:"] = true
 L["Only sign up to events if they were created by this player."] = true
 L["Only sign up to events with title:"] = true
@@ -61,3 +60,18 @@ L[" calendar invites have been ignored by AIA due to your filters."] = true
 
 L["Warn about ignored events"] = true
 L["Sets if AIA will send a message to the chat window if it ignores an event that does not meet the settings below. As a notification that you have unanswered events to deal with yourself."] = true
+
+L["Data Broker"] = true
+L["Mouse Button Interaction"] = true
+L["Left Click functionality"] = true
+L["Right Click functionality"] = true
+L["Middle Click functionality"] = true
+L["Do Nothing"] = true
+L["Open Calendar"] = true
+L["Open Options"] = true
+
+L["Pending invite"] = true
+L["Pending invites"] = true
+L["invite accepted this session"] = true
+L["invites accepted this session"] = true
+L["No new invites accepted this session"] = true
