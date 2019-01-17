@@ -1,5 +1,20 @@
 local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
 
+function AIA:FindEventCreator(event)
+	-- For some events invitedBy is an empty string, in these cases creator exists so check for either and return that name.
+	if event.creator then
+		if string.len(event.creator) > 0 then
+			return event.creator
+		end
+	elseif event.invitedBy then
+		if string.len(event.invitedBy) > 0 then
+			return event.invitedBy
+		end
+	else 
+		return
+	end
+end
+
 function AIA:SplitString(String)
 	-- Split comma delimited strings into table entries.
 	local Names = {}
@@ -9,13 +24,20 @@ function AIA:SplitString(String)
 	return Names
 end
 
-function AIA:Filter(List, Compare)
+function AIA:StringFilter(List, Compare)
 	-- Compare user entered name or names to whoever the event creator/inviter was.
 	local Names = AIA:SplitString(List)
 	if not string.match(List,'%a') then return true end -- If the user didn't enter any letters, there can't be any names, so just ignore it even if there is something else there.
 	if not string.match(Compare,'%a') then return true end -- If there was no supplied Compare values, something funky happened, deal with that elsewhere.
 	for i = 1,#Names do
 		if Names[i] == string.lower(Compare) then return true end
+	end
+	return false
+end
+
+function AIA:EventFilter(event)
+	for i = 0,4 do
+		if AIA.db.profile.Filter.Type[i] and event.eventType == i then return true end -- eventType 0 == Raid, 1 == Dungeon, 2 == PvP, 3 == Meeting, 4 == Other
 	end
 	return false
 end
@@ -43,4 +65,14 @@ function AIA:DateConversion(date)
 	minute = AIA:AddZero(minute)
 
 	return tonumber(year..month..monthDay..hour..minute)
+end
+
+function AIA:CheckFilteredEventCount(table)
+    local count = 0
+	for k,v in pairs(table) do
+		if v == true then 
+			count = count + 1
+		end
+	end
+    return count
 end

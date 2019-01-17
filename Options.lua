@@ -74,6 +74,20 @@ local Options = {
 						AIA.db.profile.NotifyOnlyAccepted = value
 					end,
 				},
+				WarnIgnoredEvents = {
+					name = "|cFFFF2C5A"..L["Warn about ignored events"].."|r",
+					desc = L["Sets if AIA will send a message to the chat window if it ignores an event that does not meet the settings below. As a notification that you have unanswered events to deal with yourself."],
+					descStyle = "inline",
+					width = "full",
+					order = 1,
+					type = "toggle",
+					get = function(info)
+						return AIA.db.profile.WarnIgnoredEvents
+					end,
+					set = function(info, value)
+						AIA.db.profile.WarnIgnoredEvents = value
+					end,
+				},
 				Tentative = {
 					name = "|cFFFF8019"..L["Tentative"].."|r",
 					desc = L["Override Tentative status. Accepts calender invites where you have replied as tentative."],
@@ -299,7 +313,7 @@ function AIA_Options:OnEnable()
 	-- Add Options
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
     local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,790)
+    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",600,840)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 

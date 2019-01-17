@@ -1,42 +1,28 @@
 local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
 local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
-local InvitesToAccept = {}
-local InvitesAccepting = 0
+local invitesToAccept = {}
+local invitesAccepted = 0
 local currentDate
 local enteredWorld = false
 local firstRun = true
 local elapsed = 0
-
-function AIA:EventChecker(event)
-	for i = 0,4 do
-		if AIA.db.profile.Filter.Type[i] and event.eventType == i then return true end -- eventType 0 == Raid, 1 == Dungeon, 2 == PvP, 3 == Meeting, 4 == Other
-	end
-	return false
-end
+totalEvents = {}
 
 function AIA:InviteStatus(event)
 	if not event then return end
 	if event.calendarType ~= "PLAYER" and event.calendarType ~= "GUILD_EVENT" and event.calendarType ~= "COMMUNITY_EVENT" then return end
+
 	local status = event.inviteStatus
-	local creatorName = 0
-	if event.creator then
-		if string.len(event.creator) > 0 then
-			creatorName = event.creator
-		end
-	elseif event.invitedBy then
-		if string.len(event.invitedBy) > 0 then
-			creatorName = event.invitedBy
-		end
-	else 
-		return
-	end
-	if creatorName == 0 then return end
 	if not status then return end
-	if status == 2 or (status >= 4 and status <= 7) then return false end -- AIA does nothing for these statuses because they're already forms of accepted.
+	if status == 2 or (status >= 4 and status <= 7) then return "Replied" end -- AIA does nothing for these statuses because they're already forms of accepted.
 	-- Statuses: Invited = 1, Accepted = 2, Declined = 3, Confirmed = 4, Out = 5, Standby = 6, Signed Up = 7, Not Signed Up = 8, Tentative = 9
+
+	local inviter = AIA:FindEventCreator(event)
+	if not inviter then return end	
+	
 	if event.inviteType == 1 then -- If the event is invite only or sign up. 1 == Invite, 2 == Sign Up
-		if AIA:Filter(AIA.db.profile.Filter.Name, creatorName) == false then return false end
-		if AIA:Filter(AIA.db.profile.Filter.Title, event.title) == false then return false end
+		if AIA:StringFilter(AIA.db.profile.Filter.Name, inviter) == false then return false end
+		if AIA:StringFilter(AIA.db.profile.Filter.Title, event.title) == false then return false end
 		if status == 1 then
 			if AIA.db.profile.Types.Invited == true then 
 				return true
@@ -51,8 +37,8 @@ function AIA:InviteStatus(event)
 			end
 		end
 	elseif event.inviteType == 2 then
-		if AIA:Filter(AIA.db.profile.Filter.SignUp.Name, creatorName) == false then return false end
-		if AIA:Filter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then return false end
+		if AIA:StringFilter(AIA.db.profile.Filter.SignUp.Name, inviter) == false then return false end
+		if AIA:StringFilter(AIA.db.profile.Filter.SignUp.Title, event.title) == false then return false end
 		if status == 8 then
 			if AIA.db.profile.Types.SignUp == true then		
 				return true
@@ -63,29 +49,74 @@ function AIA:InviteStatus(event)
 	return false
 end
 
+function AIA:CheckCalendarEvent(event,m,d,i)
+	if not event then return end
+
+	if event.calenderType ~= "PLAYER" and event.calendarType ~= "GUILD_EVENT" and event.calendarType ~= "COMMUNITY_EVENT" then return end
+
+	if AIA:DateConversion(event.startTime) < currentDate then return end -- Only check events that are in the future.
+
+	totalEvents[tostring(m)..tostring(d)..tostring(i)] = true
+
+	if AIA:EventFilter(event) == false then return end
+
+	if AIA:InviteStatus(event) == "Replied" then
+		totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
+		return
+	elseif AIA:InviteStatus(event) == false then 
+		return
+	end
+
+	totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
+
+	if event.isLocked then return end
+
+	local data = {
+		monthOffset = m,
+		day = d,
+		index = i,
+	}
+
+	table.insert(invitesToAccept,data)
+	if #invitesToAccept > invitesAccepted then
+		invitesAccepted = #invitesToAccept
+	end
+
+end
+
 function AIA:CreateCalendarList(eventName)
-	if eventName == "PLAYER_ENTERING_WORLD" then 
+
+	if eventName == "PLAYER_ENTERING_WORLD" then
+		-- Force the calendar to update so we can grab data immediately.
 		C_Calendar.OpenCalendar()
 		enteredWorld = true
 	end
 	if enteredWorld == false then return end
-	wipe(InvitesToAccept)
+	wipe(invitesToAccept)
 	currentDate = tonumber(date("%Y%m%d%H%M"))
-	for i = 0,1 do -- This month, and next month only.
-		for j = 1,31 do -- Day
-			for index = 1,10 do -- Index of events on that day
-				local event = C_Calendar.GetDayEvent(i,j,index) or nil
+
+	for m = 0,1 do -- This month, and next month only.
+		for d = 1,31 do -- Day
+			for i = 1,10 do -- Index of events on that day
+				local event = C_Calendar.GetDayEvent(m,d,i) or nil
 				if event then
 					if event.calendarType == "PLAYER" or event.calendarType == "GUILD_EVENT" or event.calendarType == "COMMUNITY_EVENT" then
-						if AIA:DateConversion(event.startTime) > currentDate and AIA:EventChecker(event) == true and AIA:InviteStatus(event) == true and not event.isLocked then
-							local data = {
-								monthOffset = i,
-								day = j,
-								index = index,
-							}
-							table.insert(InvitesToAccept,data)
-							if #InvitesToAccept > InvitesAccepting then
-								InvitesAccepting = #InvitesToAccept
+						if AIA:DateConversion(event.startTime) > currentDate and not event.isLocked then
+							totalEvents[tostring(m)..tostring(d)..tostring(i)] = true
+							if AIA:InviteStatus(event) == "Replied" then
+								totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
+							end
+							if AIA:EventFilter(event) == true and AIA:InviteStatus(event) == true then
+								totalEvents[tostring(m)..tostring(d)..tostring(i)] = false
+								local data = {
+									monthOffset = m,
+									day = d,
+									index = i,
+								}
+								table.insert(invitesToAccept,data)
+								if #invitesToAccept > invitesAccepted then
+									invitesAccepted = #invitesToAccept
+								end
 							end
 						end
 					end
@@ -93,6 +124,7 @@ function AIA:CreateCalendarList(eventName)
 			end
 		end
 	end
+
 	AIA.Accepter:SetScript("OnUpdate", AIA.AcceptInvite)
 end
 
@@ -114,31 +146,45 @@ function AIA:AcceptInvite(timer)
 		end
 	end
 	if firstRun then return end
+
 	if C_Calendar.IsActionPending() then return end
-	if not InvitesToAccept[1] then
+	
+	if not invitesToAccept[1] then
 		if AIA.db.profile.NotifyFinish then
-			if InvitesAccepting == 1 then
-				print("|cFFFF2C5AAIA: |r"..L["Accepted "]..InvitesAccepting..L[" calendar invite."])
-			elseif (AIA.db.profile.NotifyOnlyAccepted and InvitesAccepting > 0) or not AIA.db.profile.NotifyOnlyAccepted then
-				print("|cFFFF2C5AAIA: |r"..L["Accepted "]..InvitesAccepting..L[" calendar invites."])
+			if (AIA.db.profile.NotifyOnlyAccepted and invitesAccepted > 0) or not AIA.db.profile.NotifyOnlyAccepted then
+				if invitesAccepted == 1 then
+					print("|cFFFF2C5AAIA: |r"..L["Accepted "]..invitesAccepted..L[" calendar invite."])
+				else
+					print("|cFFFF2C5AAIA: |r"..L["Accepted "]..invitesAccepted..L[" calendar invites."])
+				end
 			end
-		end		
+		end
+		if AIA.db.profile.WarnIgnoredEvents == true then
+			local eventCount = AIA:CheckFilteredEventCount(totalEvents)
+			if (eventCount - invitesAccepted) == 1 then
+				print("|cFFFF2C5AAIA: |r"..eventCount - invitesAccepted..L[" calendar invite has been ignored by AIA due to your filters."])
+			elseif (eventCount - invitesAccepted) > 0 then
+				print("|cFFFF2C5AAIA: |r"..eventCount - invitesAccepted..L[" calendar invites have been ignored by AIA due to your filters."])
+			end
+		end
 		if AIA.db.profile.DisableAfterRunning == true then
 			AIA:Disable()
 		else
 			AIA.Accepter:SetScript("OnUpdate", nil)
 		end
-		InvitesAccepting = 0
+		invitesAccepted = 0
 		return
 	end
-	local m = InvitesToAccept[1].monthOffset
-	local d = InvitesToAccept[1].day
-	local i = InvitesToAccept[1].index
+
+	local m = invitesToAccept[1].monthOffset
+	local d = invitesToAccept[1].day
+	local i = invitesToAccept[1].index
 	local event = C_Calendar.GetDayEvent(m,d,i)	
-	local openData = C_Calendar.GetEventIndex()
-	local openStatus = C_Calendar.GetEventInfo()
-	if openData then -- We have an event open
-		if openData.offsetMonths == m and openData.monthDay == d and openData.eventIndex == i then
+	local openEventIndex = C_Calendar.GetEventIndex()
+	local openEventInfo = C_Calendar.GetEventInfo()
+
+	if openEventIndex then -- We have an event open
+		if openEventIndex.offsetMonths == m and openEventIndex.monthDay == d and openEventIndex.eventIndex == i then
 			-- We have an event open, and the data is all correct.
 		else
 			-- We have an event open, but it's not the correct one.
@@ -150,7 +196,8 @@ function AIA:AcceptInvite(timer)
 		C_Calendar.OpenEvent(m,d,i)
 		return
 	end
-	if event and openStatus and AIA:InviteStatus(openStatus) == true then
+
+	if event and openEventInfo and AIA:InviteStatus(openEventInfo) == true then
 		if event.inviteType == 1 then
 			C_Calendar.EventAvailable()
 		elseif event.inviteType == 2 then
@@ -161,11 +208,12 @@ function AIA:AcceptInvite(timer)
 			end
 		end
 	end
+
 end
 
 function AIA:CheckAgain()
 	print("|cFFFF2C5AAIA: |r"..L["Checking again!"])
-	InvitesAccepting = 0
+	invitesAccepted = 0
 	AIA:Enable()
 	AIA:CreateCalendarList()
 	AIA:AcceptInvite()
@@ -187,7 +235,7 @@ function AIA:OnDisable()
 	AIA.Accepter:UnregisterAllEvents()
 	AIA.Accepter:SetScript("OnUpdate", nil)
 	if AIA.db.profile.NotifyDisable then
-		if (AIA.db.profile.NotifyOnlyAccepted and InvitesAccepting > 0) or not AIA.db.profile.NotifyOnlyAccepted then
+		if (AIA.db.profile.NotifyOnlyAccepted and invitesAccepted > 0) or not AIA.db.profile.NotifyOnlyAccepted then
 			print("|cFFFF2C5AAIA: |r"..L["No more invites to accept. Shutting down."])
 		end
 	end	

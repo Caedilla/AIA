@@ -7,6 +7,7 @@ local Defaults = {
 		NotifyDisable = true,
 		NotifyFinish = true,
 		NotifyOnlyAccepted = true,
+		WarnIgnoredEvents = true,
 		Types = {
 			Tentative = false,
 			Declined = false,

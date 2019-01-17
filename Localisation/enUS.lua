@@ -54,3 +54,10 @@ L["No more invites to accept. Shutting down."] = true
 L["Cannot configure while in combat."] = true
 
 L["Open Configuration Panel"] = true
+
+
+L[" calendar invite has been ignored by AIA due to your filters."] = true
+L[" calendar invites have been ignored by AIA due to your filters."] = true
+
+L["Warn about ignored events"] = true
+L["Sets if AIA will send a message to the chat window if it ignores an event that does not meet the settings below. As a notification that you have unanswered events to deal with yourself."] = true
