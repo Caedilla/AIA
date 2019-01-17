@@ -22,6 +22,8 @@ local Defaults = {
 			SignUp = false,
 			SignUpTentative = true,
 		},
+		Minimap = {
+		},
 		Filter = {
 			Name = "",
 			Title = "",

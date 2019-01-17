@@ -29,20 +29,14 @@ function AIA:InviteStatus(event)
 		if status == 1 then
 			if AIA.db.profile.Types.Invited == true then 
 				return true
-			else
-				return "Replied"
 			end
 		elseif status == 3 then
 			if AIA.db.profile.Types.Declined == true then 
 				return true
-			else
-				return "Replied"
 			end
 		elseif status == 9 then
 			if AIA.db.profile.Types.Tentative == true then 
 				return true
-			else
-				return "Replied"
 			end
 		end
 	elseif event.inviteType == 2 then
@@ -130,7 +124,7 @@ function AIA:AcceptInvite(timer)
 	if C_Calendar.IsActionPending() then return end
 	
 	if not invitesToAccept[1] then
-		eventCount = AIA:CheckFilteredEventCount(totalEvents) - invitesAccepted
+		eventCount = AIA:CheckFilteredEventCount(totalEvents)
 
 		if AIA.db.profile.NotifyFinish then
 			if (AIA.db.profile.NotifyOnlyAccepted and invitesAccepted > 0) or not AIA.db.profile.NotifyOnlyAccepted then
@@ -264,6 +258,24 @@ end
 
 function LDB:OnLeave()
 	GameTooltip:Hide()
+end
+
+function AIA:LDBDisplayState()
+	local LDBIcon = LibStub("LibDBIcon-1.0"):GetMinimapButton("AIA")
+	if AIA.db.profile.Minimap.hide then
+		LDBIcon:Show("AIA")
+	else
+		LDBIcon:Hide("AIA")
+	end
+end
+
+function AIA:LDBLockState()
+	local LDBIcon = LibStub("LibDBIcon-1.0"):GetMinimapButton("AIA")
+	if AIA.db.profile.Minimap.lock then
+		LDBIcon:Lock("AIA")
+	else
+		LDBIcon:Unlock("AIA")
+	end
 end
 
 
