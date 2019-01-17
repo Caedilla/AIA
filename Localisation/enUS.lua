@@ -84,3 +84,7 @@ L["Filter by status:"] = true
 L["Filter by event title:"] = true
 L["Filter by event type:"] = true
 L["Filter by event creator/inviter name:"] = true
+
+L["Lock Minimap Icon"] = true
+L["Hide Minimap Icon"] = true
+L["Even if the minimap button is disabled, AIA still provides an LDB plugin if you want it to be displayed with addons such as StatBlockCore or TitanPanel."] = true

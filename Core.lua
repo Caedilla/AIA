@@ -261,20 +261,18 @@ function LDB:OnLeave()
 end
 
 function AIA:LDBDisplayState()
-	local LDBIcon = LibStub("LibDBIcon-1.0"):GetMinimapButton("AIA")
 	if AIA.db.profile.Minimap.hide then
-		LDBIcon:Show("AIA")
+		LibStub("LibDBIcon-1.0"):Hide("AIA")
 	else
-		LDBIcon:Hide("AIA")
+		LibStub("LibDBIcon-1.0"):Show("AIA")
 	end
 end
 
 function AIA:LDBLockState()
-	local LDBIcon = LibStub("LibDBIcon-1.0"):GetMinimapButton("AIA")
 	if AIA.db.profile.Minimap.lock then
-		LDBIcon:Lock("AIA")
+		LibStub("LibDBIcon-1.0"):Lock("AIA")
 	else
-		LDBIcon:Unlock("AIA")
+		LibStub("LibDBIcon-1.0"):Unlock("AIA")
 	end
 end
 

@@ -57,7 +57,12 @@ function AIA:OnInitialize()
 	
 	LDB.text = AIA.db.profile.LDB.DisplayName
 	LDB.icon = "Interface\\Icons\\Spell_Nature_StormReach"
-	local LDBIcon = LibStub("LibDBIcon-1.0"):Register("AIA", LDB, AIA.db.profile.minimap)
+	LibStub("LibDBIcon-1.0"):Register("AIA", LDB, AIA.db.profile.minimap)
+	if AIA.db.profile.Minimap.hide then
+		LibStub("LibDBIcon-1.0"):Hide("AIA")
+	else
+		LibStub("LibDBIcon-1.0"):Show("AIA")
+	end
 end
 
 function AIA:RefreshConfig()
