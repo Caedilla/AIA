@@ -1,5 +1,6 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("AIA", "enUS", true)
 
+L["Cannot check while calendar is open."] = true
 L[" calendar invite has been ignored by AIA due to your filters."] = true
 L[" calendar invite."] = true
 L[" calendar invites have been ignored by AIA due to your filters."] = true

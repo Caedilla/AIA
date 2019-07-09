@@ -449,7 +449,7 @@ local Options = {
 }
 
 function AIA_Options:OnInitialize()
-    self:SetEnabledState(false)
+	self:SetEnabledState(false)
 end
 
 function AIA_Options:OnEnable()
@@ -457,8 +457,8 @@ function AIA_Options:OnEnable()
 
 	-- Add Options
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
-    local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",590,715)
+	local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",590,715)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 

@@ -1,5 +1,13 @@
 local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
 
+function AIA:IsLeapYear(year)
+	return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
+end
+
+function AIA:DaysInMonth(month,year)
+	return month == 2 and AIA:IsLeapYear(year) and 29 or ("\31\28\31\30\31\30\31\31\30\31\30\31"):byte(month)
+end
+
 function AIA:FindEventCreator(event)
 	-- For some events invitedBy is an empty string, in these cases creator exists so check for either and return that name.
 	if event.creator then
@@ -68,11 +76,11 @@ function AIA:DateConversion(date)
 end
 
 function AIA:CheckFilteredEventCount(table)
-    local count = 0
+	local count = 0
 	for k,v in pairs(table) do
 		if v == true then 
 			count = count + 1
 		end
 	end
-    return count
+	return count
 end

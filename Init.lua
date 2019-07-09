@@ -6,9 +6,9 @@ local LDB = LibStub("LibDataBroker-1.1"):NewDataObject("AIA", {type = "data sour
 function AIA:TempOptions()
 	local Options = {
 		type = "group",
-        name = function(info)
-            return "AIA - |cFFFF2C5A"..L["Accept Invites Automatically"].. "|r r|cFFFF2C5A" .. string.match(GetAddOnMetadata("AIA","Version"),"%d+") .."|r"
-        end,
+		name = function(info)
+			return "AIA - |cFFFF2C5A"..L["Accept Invites Automatically"].. "|r r|cFFFF2C5A" .. string.match(GetAddOnMetadata("AIA","Version"),"%d+") .."|r"
+		end,
 		order = 0,
 		args = {
 				Open = {
@@ -29,8 +29,8 @@ end
 function AIA:ChatCommand(input)
 	if string.match(string.lower(input),"check") then
 		AIA:CheckAgain()
-    else
-        if not InCombatLockdown() then
+	else
+		if not InCombatLockdown() then
 			self:EnableModule("Options")
 			if AceConfigDialog.OpenFrames["AIA"] then
 				AceConfigDialog:Close("AIA")
@@ -50,9 +50,9 @@ function AIA:OnInitialize()
 	-- Profile Management
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
-    self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-    
-    -- Add Button to Open AIA's Options panel.
+	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+	
+	-- Add Button to Open AIA's Options panel.
 	AIA:TempOptions()
 	
 	LDB.text = AIA.db.profile.LDB.DisplayName
