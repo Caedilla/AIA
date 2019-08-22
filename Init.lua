@@ -20,8 +20,9 @@ function AIA:TempOptions()
 							-- HideUIPanel protected in 8.2 Prevent UI taint.
 							HideUIPanel(InterfaceOptionsFrame)
 							HideUIPanel(GameMenuFrame)
-							AIA:ChatCommand('Open') end
-						end,
+							AIA:ChatCommand('Open')
+						end
+					end,
 				},
 			},
 		}
