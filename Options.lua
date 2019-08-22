@@ -1,6 +1,6 @@
-local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
-local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
-local AIA_Options = AIA:NewModule("Options")
+local AIA = AIA or LibStub('AceAddon-3.0'):GetAddon('AIA')
+local L = LibStub('AceLocale-3.0'):GetLocale('AIA')
+local AIA_Options = AIA:NewModule('Options')
 
 local Options = {
 	type = "group",
@@ -99,7 +99,7 @@ local Options = {
 							width = 1.5,
 							disabled = function()
 								if AIA.db.profile.Types.Invited == false and AIA.db.profile.Types.Declined == false and AIA.db.profile.Types.Tentative == false then
-									return true 
+									return true
 								end
 							end,
 							get = function(info)
@@ -153,7 +153,7 @@ local Options = {
 							width = 1.5,
 							disabled = function()
 								if AIA.db.profile.Types.Invited == false and AIA.db.profile.Types.Declined == false and AIA.db.profile.Types.Tentative == false then
-									return true 
+									return true
 								end
 							end,
 							get = function(info)
@@ -193,10 +193,10 @@ local Options = {
 					order = 40,
 					type = "multiselect",
 					values = {
-						[0] = L["Raid"], 
-						[1] = L["Dungeon"], 
-						[2] = L["PvP"], 
-						[3] = L["Meeting"], 
+						[0] = L["Raid"],
+						[1] = L["Dungeon"],
+						[2] = L["PvP"],
+						[3] = L["Meeting"],
 						[4] = L["Other"]
 					},
 					get = function(info,key)
@@ -315,7 +315,7 @@ local Options = {
 				},
 			},
 		},
-		LDB = {		
+		LDB = {
 			name = L["Minimap"],
 			type = "group",
 			order = 60,
@@ -371,9 +371,9 @@ local Options = {
 							type = "select",
 							values = {
 								[0] = L["Do Nothing"],
-								[1] = L["Check Again"], 
-								[2] = L["Open Calendar"], 
-								[3] = L["Open Options"], 
+								[1] = L["Check Again"],
+								[2] = L["Open Calendar"],
+								[3] = L["Open Options"],
 							},
 							get = function(info,key)
 								return AIA.db.profile.LDB.LeftClick
@@ -388,9 +388,9 @@ local Options = {
 							type = "select",
 							values = {
 								[0] = L["Do Nothing"],
-								[1] = L["Check Again"], 
-								[2] = L["Open Calendar"], 
-								[3] = L["Open Options"], 
+								[1] = L["Check Again"],
+								[2] = L["Open Calendar"],
+								[3] = L["Open Options"],
 							},
 							get = function(info,key)
 								return AIA.db.profile.LDB.RightClick
@@ -405,9 +405,9 @@ local Options = {
 							type = "select",
 							values = {
 								[0] = L["Do Nothing"],
-								[1] = L["Check Again"], 
-								[2] = L["Open Calendar"], 
-								[3] = L["Open Options"], 
+								[1] = L["Check Again"],
+								[2] = L["Open Calendar"],
+								[3] = L["Open Options"],
 							},
 							get = function(info,key)
 								return AIA.db.profile.LDB.MiddleClick
@@ -453,19 +453,19 @@ function AIA_Options:OnInitialize()
 end
 
 function AIA_Options:OnEnable()
-	self.db = AIA.db -- Setup Saved Variables	
+	self.db = AIA.db -- Setup Saved Variables
 
 	-- Add Options
-	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("AIA", Options)
-	local Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	LibStub("AceConfigDialog-3.0"):SetDefaultSize("AIA",590,715)
+	LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable('AIA', Options)
+	local Profiles = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
+	LibStub('AceConfigDialog-3.0'):SetDefaultSize('AIA',590,715)
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 
 	-- Profile Management
-	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
-	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
-	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+	self.db.RegisterCallback(self, 'OnProfileChanged', 'RefreshConfig')
+	self.db.RegisterCallback(self, 'OnProfileCopied', 'RefreshConfig')
+	self.db.RegisterCallback(self, 'OnProfileReset', 'RefreshConfig')
 end
 
 function AIA_Options:RefreshConfig()

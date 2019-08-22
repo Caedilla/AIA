@@ -1,11 +1,11 @@
-local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
+local AIA = AIA or LibStub('AceAddon-3.0'):GetAddon('AIA')
 
 function AIA:IsLeapYear(year)
 	return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
 end
 
 function AIA:DaysInMonth(month,year)
-	return month == 2 and AIA:IsLeapYear(year) and 29 or ("\31\28\31\30\31\30\31\31\30\31\30\31"):byte(month)
+	return month == 2 and AIA:IsLeapYear(year) and 29 or ('\31\28\31\30\31\30\31\31\30\31\30\31'):byte(month)
 end
 
 function AIA:FindEventCreator(event)
@@ -18,7 +18,7 @@ function AIA:FindEventCreator(event)
 		if string.len(event.invitedBy) > 0 then
 			return event.invitedBy
 		end
-	else 
+	else
 		return
 	end
 end
@@ -54,7 +54,7 @@ function AIA:AddZero(number)
 	-- Event date info returns dates without leading zeros, to easily compare dates, this adds them back in if necessary.
 	local string = tostring(number)
 	if tonumber(string) < 10 then
-		string = "0"..string
+		string = '0'.. string
 	end
 	return string
 end
@@ -78,7 +78,7 @@ end
 function AIA:CheckFilteredEventCount(table)
 	local count = 0
 	for k,v in pairs(table) do
-		if v == true then 
+		if v == true then
 			count = count + 1
 		end
 	end

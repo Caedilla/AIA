@@ -1,5 +1,5 @@
-local AIA = AIA or LibStub("AceAddon-3.0"):GetAddon("AIA")
-local L = LibStub("AceLocale-3.0"):GetLocale("AIA")
+local AIA = AIA or LibStub('AceAddon-3.0'):GetAddon('AIA')
+local L = LibStub('AceLocale-3.0'):GetLocale('AIA')
 
 local Defaults = {
 	profile = {
@@ -9,7 +9,7 @@ local Defaults = {
 		NotifyOnlyAccepted = true,
 		WarnIgnoredEvents = true,
 		LDB = {
-			DisplayName = "AIA",
+			DisplayName = 'AIA',
 			WarnIgnoredEvents = true,
 			LeftClick = 1,
 			RightClick = 3,
@@ -25,11 +25,11 @@ local Defaults = {
 		Minimap = {
 		},
 		Filter = {
-			Name = "",
-			Title = "",
+			Name = '',
+			Title = '',
 			SignUp = {
-				Name = "",
-				Title = "",
+				Name = '',
+				Title = '',
 			},
 			Type = {
 				[0] = true,
