@@ -436,7 +436,6 @@ local Options = {
 					type = "execute",
 					func = function()
 						print("|cFFFF2C5AAIA: |r"..L["Checking again!"])
-						InvitesAccepting = 0
 						AIA:Enable()
 						AIA:CreateCalendarList()
 						AIA:AcceptInvite()
