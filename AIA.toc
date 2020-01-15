@@ -1,4 +1,4 @@
-## Interface: 80205
+## Interface: 80300
 ## Title: AIA - |cFFFF2C5AAccept Invites Automatically|r
 ## Notes: Accepts calendar invites automatically.
 ## Author: Raeli
