@@ -1,4 +1,4 @@
-local AIA = AIA or LibStub('AceAddon-3.0'):NewAddon('AIA', 'AceConsole-3.0', 'AceEvent-3.0')
+local AIA = LibStub('AceAddon-3.0'):NewAddon('AIA', 'AceConsole-3.0', 'AceEvent-3.0')
 local L = LibStub('AceLocale-3.0'):GetLocale('AIA')
 local AceConfigDialog = LibStub('AceConfigDialog-3.0')
 local LDB = LibStub('LibDataBroker-1.1'):NewDataObject('AIA', {type = 'data source', text = 'AIA'})

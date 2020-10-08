@@ -1,4 +1,4 @@
-local AIA = AIA or LibStub('AceAddon-3.0'):GetAddon('AIA')
+local AIA = LibStub('AceAddon-3.0'):GetAddon('AIA')
 
 function AIA:IsLeapYear(year)
 	return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)

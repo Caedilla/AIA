@@ -1,5 +1,4 @@
-local AIA = AIA or LibStub('AceAddon-3.0'):GetAddon('AIA')
-local L = LibStub('AceLocale-3.0'):GetLocale('AIA')
+local AIA = LibStub('AceAddon-3.0'):GetAddon('AIA')
 
 local Defaults = {
 	profile = {

@@ -1,3 +1,3 @@
-# AIA r23-release
+# AIA r24-release
 ### Updates
-* Updated interface version for 8.3
+* Updated interface version for the Shadowlands pre-patch.
