@@ -6,6 +6,8 @@
 ## SavedVariables: AIADB
 ## X-SavedVariables: AIADB
 ## OptionalDeps: Ace3
+## X-Curse-Project-ID: 301639
+## X-WoWI-ID: 25727
 
 #@no-lib-strip@
 embeds.xml
