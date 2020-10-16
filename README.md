@@ -1,4 +1,4 @@
-# AIA - Accept Invites Automatically
+# AIA Calendar Manager - Accept Invites Automatically
 
 ## Download
 
@@ -9,11 +9,11 @@
 
 **AIA** is a simple addon to automatically accept in-game calendar invites. If your guild uses the in-game calendar for events, but you want to automatically reply that you'll be there. This is for you - especially if your guild creates events for every raid etc.
 
- 
+
 
 By default, AIA will ignore events where you have manually set them to tentative or declined. Using AIA, you don't have to worry about if you're signed up for an event, and if you can't attend - simply set yourself as such!
 
- 
+
 ## Options
 
 AIA comes with a few options which can be accessed from the Blizzard Interface window, on the AddOns tab, or by typing **/aia**.
@@ -40,4 +40,3 @@ You can [report issues on Curseforge](https://wow.curseforge.com/projects/aia/is
 ## Localisation
 
 AIA supports localisation, if you want to help me out by localising AIA, please go to the [localisation page on Curseforge](https://wow.curseforge.com/projects/aia/localization).
-
